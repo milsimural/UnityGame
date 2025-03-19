@@ -47,11 +47,15 @@ Light2D
 Light2DBlendStyle
 PixelPerfectCamera
 Renderer2DData
+FullScreenPassRendererFeatureEditor
+
 RenderObjectsPass
 UnityEngine
 Experimental
 Rendering
 Universal
+FullScreenPassRendererFeature
+
 RenderQueueType
 RenderObjects
 AssetModificationProcessor

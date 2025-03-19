@@ -31,11 +31,15 @@ BufferHandle
 RenderTargetInfo
 RendererListHandle
 TextureHandle
+FullScreenPassRendererFeatureEditor
+
 RenderObjectsPass
 UnityEngine
 Experimental
 Rendering
 Universal
+FullScreenPassRendererFeature
+
 RenderQueueType
 RenderObjects
 AssetModificationProcessor
