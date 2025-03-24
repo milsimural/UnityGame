@@ -622,8 +622,10 @@ m_ResolvedPackages:
     - 1.12.0
     - 1.13.0
     - 1.13.1
+    - 1.14.0
     compatible:
     - 1.13.1
+    - 1.14.0
     recommended: 1.13.1
     deprecated: []
   dependencies:
@@ -856,15 +858,18 @@ m_ResolvedPackages:
     - 5.2.0
     - 5.2.2
     - 5.2.3
+    - 5.2.4
     - 6.0.1-pre.1
     - 6.0.1-pre.2
     - 6.0.1
     - 6.0.2
     - 6.0.3
     - 6.0.4
+    - 6.0.5
     compatible:
     - 6.0.4
-    recommended: 6.0.4
+    - 6.0.5
+    recommended: 6.0.5
     deprecated: []
   dependencies:
   - name: com.unity.shadergraph
@@ -4715,7 +4720,7 @@ m_ResolvedPackages:
     email: 
     url: 
   category: 
-  type: 
+  type: asset
   description: A framework for making any serializable field a setting, complete
     with a pre-built settings interface.
   errors: []
@@ -4746,7 +4751,7 @@ m_ResolvedPackages:
     configSource: 0
   hideInEditor: 1
   entitlements:
-    licensingModel: 0
+    licensingModel: 1
   isAssetStorePackage: 0
   datePublishedTicks: 637744099390000000
   documentationUrl: 
