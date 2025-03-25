@@ -386,10 +386,10 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll"
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll"
-"Library/PackageCache/com.unity.probuilder@a2827f523e21/External/StlExporter/AssemblyInfo.cs"
-"Library/PackageCache/com.unity.probuilder@a2827f523e21/External/StlExporter/Code/pb_Stl.cs"
-"Library/PackageCache/com.unity.probuilder@a2827f523e21/External/StlExporter/Code/pb_Stl_Exporter.cs"
-"Library/PackageCache/com.unity.probuilder@a2827f523e21/External/StlExporter/Code/pb_Stl_Importer.cs"
+"Library/PackageCache/com.unity.probuilder@b55f3ad2afd2/External/StlExporter/AssemblyInfo.cs"
+"Library/PackageCache/com.unity.probuilder@b55f3ad2afd2/External/StlExporter/Code/pb_Stl.cs"
+"Library/PackageCache/com.unity.probuilder@b55f3ad2afd2/External/StlExporter/Code/pb_Stl_Exporter.cs"
+"Library/PackageCache/com.unity.probuilder@b55f3ad2afd2/External/StlExporter/Code/pb_Stl_Importer.cs"
 -langversion:9.0
 /deterministic
 /optimize+

@@ -69,13 +69,13 @@
       "source": "builtin",
       "testable": false
     },
-    "com.unity.probuilder@6.0.4": {
+    "com.unity.probuilder@6.0.5": {
       "name": "com.unity.probuilder",
       "displayName": "ProBuilder",
-      "resolvedPath": "C:\\UNITYREPOS\\UnityGame\\First\\Library\\PackageCache\\com.unity.probuilder@a2827f523e21",
-      "fingerprint": "a2827f523e21ea251861dac290125410ba4e560b",
+      "resolvedPath": "C:\\UNITYREPOS\\UnityGame\\First\\Library\\PackageCache\\com.unity.probuilder@b55f3ad2afd2",
+      "fingerprint": "b55f3ad2afd2f5505e0e532971da5bb5a17f128f",
       "editorCompatibility": "6000.0.0a1",
-      "version": "6.0.4",
+      "version": "6.0.5",
       "source": "registry",
       "testable": false
     },

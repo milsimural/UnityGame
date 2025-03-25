@@ -1,8 +1,10 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class SelectableObj : MonoBehaviour
 {
     public GameObject Marker;
+    public NavMeshAgent Agent;
 
     public void Start()
     {
@@ -26,5 +28,10 @@ public class SelectableObj : MonoBehaviour
     public void Unselect()
     {
         Marker.SetActive(false);
+    }
+
+    public void WhenClickOnGround(Vector3 point)
+    {
+        Agent.SetDestination(point);
     }
 }
