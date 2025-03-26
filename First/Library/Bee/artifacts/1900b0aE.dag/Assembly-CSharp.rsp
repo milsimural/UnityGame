@@ -430,6 +430,7 @@
 "Assets/Scripts/Manager.cs"
 "Assets/Scripts/Ship/Navigation/SelectableCol.cs"
 "Assets/Scripts/Ship/Navigation/SelectableObj.cs"
+"Assets/Scripts/Ship/Navigation/Ship.cs"
 "Assets/TutorialInfo/Scripts/Readme.cs"
 -langversion:9.0
 /deterministic

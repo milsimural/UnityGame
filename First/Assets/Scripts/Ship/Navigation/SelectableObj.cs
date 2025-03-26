@@ -6,31 +6,31 @@ public class SelectableObj : MonoBehaviour
     public GameObject Marker;
     public NavMeshAgent Agent;
 
-    public void Start()
+    protected virtual void Start()
     {
         Marker.SetActive(false);
     }
-    public void OnHover()
+    public virtual void OnHover()
     {
         transform.localScale = Vector3.one * 1.1f;
     }
 
-    public void OnUnHover()
+    public virtual void OnUnHover()
     {
         transform.localScale = Vector3.one;
     }
 
-    public void Select()
+    public virtual void Select()
     {
         Marker.SetActive(true);
     }
 
-    public void Unselect()
+    public virtual void Unselect()
     {
         Marker.SetActive(false);
     }
 
-    public void WhenClickOnGround(Vector3 point)
+    public virtual void WhenClickOnGround(Vector3 point)
     {
         Agent.SetDestination(point);
     }
