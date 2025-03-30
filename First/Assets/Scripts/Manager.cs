@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,7 +7,12 @@ public class Manager : MonoBehaviour
 {
     public Camera Camera;
     public SelectableObj Hovered;
-    public List<SelectableObj> ListOfSelected = new List<SelectableObj>();
+    public SelectableObj Selected;
+    public bool isHardcore = false;
+
+    private bool _isDragging = false;
+    private Vector3 _startPosition;
+    private LineRenderer _lineRenderer;
 
     void Start()
     {
@@ -18,6 +24,7 @@ public class Manager : MonoBehaviour
     {
         Ray ray = Camera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
+        // Логика выделения обьекта куда мышкой навелись
         if (Physics.Raycast(ray, out hit) )
         {
             if(hit.collider.GetComponent<SelectableCol>())
@@ -42,6 +49,8 @@ public class Manager : MonoBehaviour
                 if(Hovered)
                 {
                     UnHoverCurrent();
+                    if(_isDragging && !Input.GetMouseButton(0)) _isDragging = false;
+                    Debug.Log("Сброс драгинга");
                 }
             }
         } else
@@ -49,34 +58,47 @@ public class Manager : MonoBehaviour
             UnHoverCurrent();
         }
 
-        if (Input.GetMouseButtonUp(0))
+        if (Hovered && Input.GetMouseButtonDown(0))
         {
-            if (Hovered)
-            {
-                if(Input.GetKey(KeyCode.LeftControl) == false)
-                {
-                    UnselectAll();
-                }
+                if(Selected) UnselectAll();
                 Select(Hovered);
-            } else
-            {
-                if(ListOfSelected.Count > 0 && hit.collider.tag == "Sea")
-                {
-                    for (int i = 0; i < ListOfSelected.Count; i++)
-                    {
-                        ListOfSelected[i].WhenClickOnGround(hit.point);
-                    }
-                }
+                _isDragging = false;
+                Debug.Log("Select");
+                //_lineRenderer = Selected.GetComponent<LineRenderer>();
+                //_startPosition = Selected.transform.position;
+                //_startPosition = hit.point;
+                //_lineRenderer.SetPosition(0, _startPosition);
+                //_lineRenderer.enabled = false;
+        }
+
+        if (Hovered && Selected && Input.GetMouseButtonDown(0))
+        {
+            _isDragging = true;
+            _lineRenderer = Selected.GetComponent<LineRenderer>();
+            _startPosition = Selected.transform.position;
+            _lineRenderer.SetPosition(0, _startPosition);
+            Debug.Log("Selected and click");
+        }
+
+        if (_isDragging && Input.GetMouseButton(0))
+        {
+            Debug.Log("Dragging");
+            Vector3 endPosition = hit.point;
+            _lineRenderer.SetPosition(1, endPosition);
+            if (GetLineTotalLength(_lineRenderer) > 0.7f) {
+                _lineRenderer.enabled = true;
+            } else {
+                _lineRenderer.enabled = false;
             }
         }
 
-        if(Input.GetMouseButtonUp(1))
+        if (_isDragging && hit.collider.tag == "Sea" && Input.GetMouseButtonUp(0))
         {
-            if(ListOfSelected.Count > 0)
-            {
-                UnselectAll();
-            }
-        }
+            Debug.Log("MouseUp in dragging");
+            _isDragging = false;
+            _lineRenderer.enabled = false;
+            Selected.WhenClickOnGround(hit.point);
+        } 
 
     }
 
@@ -88,20 +110,33 @@ public class Manager : MonoBehaviour
 
     private void UnselectAll()
     {
-        for (int i = 0; i < ListOfSelected.Count; i++)
-        {
-            ListOfSelected[i].Unselect();
-        }
-        ListOfSelected.Clear();
+        Selected.Unselect();
+        Selected = null;
     }
 
     private void Select(SelectableObj selectableObj)
     {
-        if (ListOfSelected.Contains(selectableObj) == false)
+        if (Selected != selectableObj)
         {
-            ListOfSelected.Add(selectableObj);
+            Selected = selectableObj;
             selectableObj.Select();
         }
     }
     
+    private float GetLineTotalLength(LineRenderer lineRenderer)
+    {
+        if (lineRenderer.positionCount < 2)
+            return 0f;
+
+        float totalLength = 0f;
+
+        for (int i = 0; i < lineRenderer.positionCount - 1; i++)
+        {
+            Vector3 point1 = lineRenderer.GetPosition(i);
+            Vector3 point2 = lineRenderer.GetPosition(i + 1);
+            totalLength += Vector3.Distance(point1, point2);
+        }
+
+        return totalLength;
+    }
 }

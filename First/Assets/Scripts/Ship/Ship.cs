@@ -43,6 +43,9 @@ public class Ship : SelectableObj
     private UnityEngine.UI.Text _sailorIndicatorText;
     private UnityEngine.UI.Text _armorIndicatorText;
 
+    // Gabarites
+    public Vector3 shipDimensions = new Vector3(10f, 5f, 20f); // x=ширина, y=высота, z=длина
+
     protected override void Start()
     {
         base.Start();
