@@ -1,4 +1,9 @@
+using JetBrains.Annotations;
+using Unity.VisualScripting;
+using UnityEditorInternal;
 using UnityEngine;
+using UnityEngine.Rendering;
+using static UnityEngine.Rendering.DebugUI;
 
 [RequireComponent(typeof(Camera))]
 public class CameraMove : MonoBehaviour
@@ -23,29 +28,24 @@ public class CameraMove : MonoBehaviour
     public float maxZ = 50f;
 
     [Header("Height Settings")]
-    [Tooltip("Fixed camera height")]
-    public float cameraHeight = 15f;
-    [Tooltip("Should camera stay at fixed height?")]
-    public bool fixedHeight = true;
-
-    [Header("Camera Height Settings")]
-    public float zoomSpeed = 10f;
-    public float minZoom = 40f;
-    public float maxZoom = 80f;
-    public float currentZoom = 60f;
-    public bool isHeightScriptOn = true;
-
     private Camera mainCamera;
+    [SerializeField] private float _yPos = 15f;
+    [SerializeField] private float _fov = 60f;
+    [SerializeField] private int _zoomPreset = 3;
 
+    // Служебные переменные для перемещения от границ
     private Vector3 currentVelocity;
     private bool isMoving;
 
+    // Служебные переменны для зума
+    private bool _isBlockedZoom = false;
+    [SerializeField] private float _transitionSpeed = 3f;
+    [SerializeField] private float _threshold = 0.02f;
+    
 
     private void Start()
     {
         mainCamera = GetComponent<Camera>();
-        currentZoom = Mathf.Clamp(currentZoom, minZoom, maxZoom);
-        mainCamera.fieldOfView = currentZoom;
     }
 
     void Update()
@@ -53,12 +53,8 @@ public class CameraMove : MonoBehaviour
         if(isScriptOn) {
             HandleEdgeMovement();
             ApplyBoundaries();
-            MaintainHeight();
         }
-        if (isHeightScriptOn)
-        {
-            HandleZoom();
-        }
+        HandleZoom();
        
     }
 
@@ -122,50 +118,88 @@ public class CameraMove : MonoBehaviour
         transform.position = pos;
     }
 
-    void MaintainHeight()
-    {
-        if (fixedHeight && !Mathf.Approximately(transform.position.y, cameraHeight))
-        {
-            transform.position = new Vector3(
-                transform.position.x,
-                cameraHeight,
-                transform.position.z
-            );
-        }
-    }
-
-    // Визуализация границ в редакторе
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.cyan;
-        Vector3 center = new Vector3(
-            (minX + maxX) * 0.5f,
-            cameraHeight,
-            (minZ + maxZ) * 0.5f
-        );
-        Vector3 size = new Vector3(maxX - minX, 0.1f, maxZ - minZ);
-        Gizmos.DrawWireCube(center, size);
-    }
-
     // Высота камеры
     void HandleZoom()
     {
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (scroll == 0) return;
+        if (!_isBlockedZoom)
+        {
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            if (scroll == 0) return;
+            Debug.Log("Цикл выбора кейса");
+            _isBlockedZoom = true;
+            int scrollInt;
+            if (scroll > 0) { scrollInt = 1; } else { scrollInt = -1; }
+            if (scrollInt > 0)
+            {
+                _zoomPreset = Mathf.Clamp(_zoomPreset + scrollInt, 0, 6);
+            }
+            else
+            {
+                _zoomPreset = Mathf.Clamp(_zoomPreset - scrollInt, 0, 6);
+            }
+            switch (_zoomPreset)
+            {
+                case 0:
+                    _yPos = 10;
+                    _fov = 45;
+                    break;
+                case 1:
+                    _yPos = 15;
+                    _fov = 50;
+                    break;
+                case 2:
+                    _yPos = 15;
+                    _fov = 55;
+                    break;
+                case 3:
+                    _yPos = 15;
+                    _fov = 60;
+                    break;
+                case 4:
+                    _yPos = 25;
+                    _fov = 60;
+                    break;
+                case 5:
+                    _yPos = 35;
+                    _fov = 65;
+                    break;
+                case 6:
+                    _yPos = 45;
+                    _fov = 70;
+                    break;
+            }
+        }
 
-        // Определяем точку под курсором мыши в мировых координатах
-        Vector3 mouseWorldPosBeforeZoom = mainCamera.ScreenToWorldPoint(GetMousePositionWithDepth());
-
-        // Изменяем зум
-
-            currentZoom -= scroll * zoomSpeed;
-            currentZoom = Mathf.Clamp(currentZoom, minZoom, maxZoom);
-            mainCamera.fieldOfView = currentZoom;
-
-        // Определяем новую позицию камеры, чтобы точка под курсором осталась той же
-        Vector3 mouseWorldPosAfterZoom = mainCamera.ScreenToWorldPoint(GetMousePositionWithDepth());
-        Vector3 posDiff = mouseWorldPosBeforeZoom - mouseWorldPosAfterZoom;
-        transform.position += posDiff;
+        if (_isBlockedZoom)
+        {
+            Debug.Log("Цикл изменения зума");
+            if (Mathf.Abs(mainCamera.fieldOfView - _fov) > _threshold)
+            {
+                mainCamera.fieldOfView = Mathf.Lerp(mainCamera.fieldOfView, _fov, Time.deltaTime * _transitionSpeed);
+            }
+            else
+            {
+                mainCamera.fieldOfView = _fov;
+                Debug.Log("Fov installed");
+            }
+            
+            Vector3 currentCameraPos = transform.position;
+            if (Mathf.Abs(currentCameraPos.y - _yPos) > _threshold)
+            {
+                currentCameraPos.y = Mathf.Lerp(currentCameraPos.y, _yPos, Time.deltaTime * _transitionSpeed);
+            }
+            else
+            {
+                transform.position = currentCameraPos;
+                Debug.Log("PosY installed");
+            }
+            if (mainCamera.fieldOfView == _fov && currentCameraPos.y == _yPos)
+            {
+                Debug.Log("Ready");
+                _isBlockedZoom = false;
+            }
+                
+        }
     }
 
     Vector3 GetMousePositionWithDepth()

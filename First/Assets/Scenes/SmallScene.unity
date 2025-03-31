@@ -2386,13 +2386,11 @@ MonoBehaviour:
   maxX: 50
   minZ: -50
   maxZ: 50
-  cameraHeight: 15
-  fixedHeight: 1
-  zoomSpeed: 10
-  minZoom: 40
-  maxZoom: 80
-  currentZoom: 60
-  isHeightScriptOn: 1
+  _yPos: 15
+  _fov: 60
+  _zoomPreset: 3
+  _transitionSpeed: 3
+  _threshold: 0.02
 --- !u!1 &1143203880
 GameObject:
   m_ObjectHideFlags: 0
