@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Manager : MonoBehaviour
@@ -13,6 +14,10 @@ public class Manager : MonoBehaviour
     private bool _isDragging = false;
     private Vector3 _startPosition;
     private LineRenderer _lineRenderer;
+
+    [SerializeField] private float dragSpeed = 16f; // Скорость перемещения
+    private Vector3 dragOrigin; // Точка, от которой начали тянуть
+    private bool isDraggingCam = false;
 
     void Start()
     {
@@ -50,7 +55,6 @@ public class Manager : MonoBehaviour
                 {
                     UnHoverCurrent();
                     if(_isDragging && !Input.GetMouseButton(0)) _isDragging = false;
-                    Debug.Log("Сброс драгинга");
                 }
             }
         } else
@@ -63,12 +67,6 @@ public class Manager : MonoBehaviour
                 if(Selected) UnselectAll();
                 Select(Hovered);
                 _isDragging = false;
-                Debug.Log("Select");
-                //_lineRenderer = Selected.GetComponent<LineRenderer>();
-                //_startPosition = Selected.transform.position;
-                //_startPosition = hit.point;
-                //_lineRenderer.SetPosition(0, _startPosition);
-                //_lineRenderer.enabled = false;
         }
 
         if (Hovered && Selected && Input.GetMouseButtonDown(0))
@@ -77,29 +75,69 @@ public class Manager : MonoBehaviour
             _lineRenderer = Selected.GetComponent<LineRenderer>();
             _startPosition = Selected.transform.position;
             _lineRenderer.SetPosition(0, _startPosition);
-            Debug.Log("Selected and click");
         }
 
         if (_isDragging && Input.GetMouseButton(0))
         {
-            Debug.Log("Dragging");
-            Vector3 endPosition = hit.point;
-            _lineRenderer.SetPosition(1, endPosition);
-            if (GetLineTotalLength(_lineRenderer) > 0.7f) {
-                _lineRenderer.enabled = true;
-            } else {
-                _lineRenderer.enabled = false;
+            if(hit.collider)
+            {
+                Vector3 endPosition = hit.point;
+                _lineRenderer.SetPosition(1, endPosition);
+                if (GetLineTotalLength(_lineRenderer) > 0.7f)
+                {
+                    _lineRenderer.enabled = true;
+                }
+                else
+                {
+                    _lineRenderer.enabled = false;
+                }
             }
+            
         }
 
-        if (_isDragging && hit.collider.tag == "Sea" && Input.GetMouseButtonUp(0))
+        if (_isDragging && Input.GetMouseButtonUp(0))
         {
-            Debug.Log("MouseUp in dragging");
-            _isDragging = false;
-            _lineRenderer.enabled = false;
-            Selected.WhenClickOnGround(hit.point);
+            if(!hit.collider) {
+                _isDragging = false;
+                _lineRenderer.enabled = false;
+            }
+            else if (hit.collider.tag == "Sea") {
+                _isDragging = false;
+                _lineRenderer.enabled = false;
+                Selected.WhenClickOnGround(hit.point);
+            }       
         } 
 
+
+        // Начало перетаскивания (зажали ЛКМ)
+        if (!Hovered && !_isDragging && Input.GetMouseButtonDown(0))
+             {
+            Debug.Log("Start");
+            dragOrigin = Input.mousePosition;
+                 isDraggingCam = true;
+             }
+
+                // Завершение перетаскивания (отпустили ЛКМ)
+        if (!_isDragging && Input.GetMouseButtonUp(0))
+             {
+            Debug.Log("End");     
+            isDraggingCam = false;
+             }
+
+                // Если зажата ЛКМ и двигаем мышью
+        if (isDraggingCam)
+             {
+                // Разница между текущей позицией и начальной точкой
+                Vector3 difference = dragOrigin - Input.mousePosition;
+                Debug.Log(difference.sqrMagnitude);
+
+                // Перемещаем камеру в противоположном направлении
+                Camera.transform.Translate(difference * dragSpeed * Time.deltaTime);
+
+                // Обновляем точку отсчёта для плавности
+                dragOrigin = Input.mousePosition;
+
+             }
     }
 
     private void UnHoverCurrent()
