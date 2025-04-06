@@ -29,9 +29,11 @@ public class CameraMove : MonoBehaviour
 
     [Header("Height Settings")]
     private Camera mainCamera;
+    [SerializeField] private float _xPos = 0;
     [SerializeField] private float _yPos = 15f;
+    [SerializeField] private float _zPos = 0;
     [SerializeField] private float _fov = 60f;
-    [SerializeField] private int _zoomPreset = 3;
+    [SerializeField] private int _zoomPreset = 2;
 
     // Служебные переменные для перемещения от границ
     private Vector3 currentVelocity;
@@ -46,6 +48,11 @@ public class CameraMove : MonoBehaviour
     private void Start()
     {
         mainCamera = GetComponent<Camera>();
+        mainCamera.transform.rotation = Quaternion.Euler(60f, 0f, 0f);
+        Vector3 cameraPos = mainCamera.transform.position;
+        cameraPos.x = _xPos;
+        cameraPos.y = _yPos;
+        cameraPos.z = _zPos;
     }
 
     void Update()
@@ -130,17 +137,15 @@ public class CameraMove : MonoBehaviour
 
             // Определяем направление скролла
             int scrollDirection = scroll > 0 ? -1 : 1;
-            _zoomPreset = Mathf.Clamp(_zoomPreset + scrollDirection, 0, 6);
+            _zoomPreset = Mathf.Clamp(_zoomPreset + scrollDirection, 0, 4);
 
             switch (_zoomPreset)
             {
-                case 0: _yPos = 0; _fov = 60; break;
-                case 1: _yPos = 05; _fov = 60; break;
-                case 2: _yPos = 05; _fov = 60; break;
-                case 3: _yPos = 15; _fov = 60; break;
-                case 4: _yPos = 25; _fov = 60; break;
-                case 5: _yPos = 35; _fov = 60; break;
-                case 6: _yPos = 45; _fov = 60; break;
+                case 0: _yPos = 15; _fov = 22; break;
+                case 1: _yPos = 15; _fov = 42; break;
+                case 2: _yPos = 15; _fov = 62; break;
+                case 3: _yPos = 15; _fov = 82; break;
+                case 4: _yPos = 45f; _fov = 82;  break;
             }
         }
 
@@ -153,15 +158,17 @@ public class CameraMove : MonoBehaviour
             // Плавное изменение позиции
             Vector3 currentCameraPos = transform.position;
             currentCameraPos.y = Mathf.Lerp(currentCameraPos.y, _yPos, Time.deltaTime * _transitionSpeed);
+            currentCameraPos.z = Mathf.Lerp(currentCameraPos.z, _zPos, Time.deltaTime * _transitionSpeed);
             transform.position = currentCameraPos;
 
             // Проверяем завершение анимации с допуском
             if (Mathf.Abs(mainCamera.fieldOfView - _fov) < _threshold &&
-                Mathf.Abs(currentCameraPos.y - _yPos) < _threshold)
+                Mathf.Abs(currentCameraPos.y - _yPos) < _threshold && Mathf.Abs(currentCameraPos.z - _zPos) < _threshold)
             {
                 // Финализируем значения
                 mainCamera.fieldOfView = _fov;
                 currentCameraPos.y = _yPos;
+                currentCameraPos.z = _zPos;
                 transform.position = currentCameraPos;
 
                 _isBlockedZoom = false;
