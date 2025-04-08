@@ -429,6 +429,8 @@
 -analyzer:"C:/Program Files/Unity/Hub/Editor/6000.0.42f1/Editor/Data/Tools/Unity.SourceGenerators/Unity.UIToolkit.SourceGenerator.dll"
 "Assets/Scripts/CameraController.cs"
 "Assets/Scripts/CameraMove.cs"
+"Assets/Scripts/Generators/AdvancedIslandGenerator.cs"
+"Assets/Scripts/Generators/IslandMeshGenerator.cs"
 "Assets/Scripts/Manager.cs"
 "Assets/Scripts/ManagerBackup.cs"
 "Assets/Scripts/Ship/Navigation/SelectableCol.cs"
